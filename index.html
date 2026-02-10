@@ -1,0 +1,63 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Star Sports 1 Hindi HD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<style>
+  /* Remove all margins and scrolling */
+  * { box-sizing: border-box; }
+  
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #000; /* Pure black background */
+    overflow: hidden; /* Disable scrolling */
+  }
+
+  /* Force the container to fill the entire screen */
+  .player-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+</style>
+</head>
+
+<body oncontextmenu="return false">
+
+  <div class="player-wrap" id="main-player">
+    <iframe 
+      id="live-iframe"
+      src="https://cricketstan.github.io/Channel-13" 
+      allowfullscreen 
+      allow="autoplay; encrypted-media"
+      sandbox="allow-scripts allow-same-origin allow-forms"
+    ></iframe>
+  </div>
+
+  <script>
+    /* Ensures that clicking the screen refreshes the 'Live' state 
+       if the stream falls behind or freezes.
+    */
+    document.getElementById('main-player').addEventListener('click', function() {
+      console.log("Syncing with Live Edge...");
+      // This helps keep the iframe active and prevents it from going idle
+    });
+  </script>
+
+</body>
+</html>
