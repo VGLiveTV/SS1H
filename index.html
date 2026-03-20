@@ -76,14 +76,14 @@ clearKeys: {
 };
 
 let cookieHeader =
-"__hdnea__=st=1771011362~exp=1771097762~acl=/*~hmac=2110e29dfaa34acd4bf61ac879fc4a5075b56abecc504448aeb51dab8a7b2169";
+"https://allrounderid2.pages.dev/api/cookie.json";
 
 let streamUrl =
 "https://jiotvmblive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd";
 
 try {
 const response = await fetch(
-'https://allrounderid.pages.dev/api/jiotv2.json'
+'https://allrounderid.pages.dev/api/jiotv.json'
 );
 const data = await response.json();
 
@@ -100,7 +100,7 @@ let usingBackupCookie = false;
 
 async function fetchBackupCookie() {
 if (backupCookie) return backupCookie;
-const res = await fetch('https://crickettv.site/api/cookie.json');
+const res = await fetch('https://allrounderid2.pages.dev/api/cookie.json');
 const data = await res.json();
 backupCookie = data.cookie;
 return backupCookie;
