@@ -109,16 +109,13 @@ color:rgba(255,255,255,0.12);
 
     try{
       const response=await fetch(CONFIG.cookieUrl,{cache:"no-store"});
-      const data=await response.json();
+      const textData=await response.text();
       
-      // Loop through the JSON array to find the __hdnea__ cookie
-      if (Array.isArray(data)) {
-        for (let i = 0; i < data.length; i++) {
-          if (data[i].cookie && data[i].cookie.includes("__hdnea__=")) {
-            cookieValue = data[i].cookie;
-            break; // Stop looking once we find it
-          }
-        }
+      // SMART EXTRACTOR: Scans the entire raw file and safely extracts only the __hdnea__ string, 
+      // ignoring JSON structure, quotes, or formatting completely.
+      const match = textData.match(/__hdnea__=[^"'\s\\]+/);
+      if (match) {
+        cookieValue = match[0];
       }
     }catch(e){}
 
