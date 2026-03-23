@@ -111,7 +111,6 @@ color:rgba(255,255,255,0.12);
       const response=await fetch(CONFIG.cookieUrl,{cache:"no-store"});
       const rawText=await response.text();
       
-      // SMART COOKIE EXTRACTOR
       const match = rawText.match(/__hdnea__=[A-Za-z0-9~=/*_-]+/);
       
       if (match) {
@@ -124,12 +123,6 @@ color:rgba(255,255,255,0.12);
     if(cookieValue){
       player.getNetworkingEngine().registerRequestFilter((type,request)=>{
         
-        // DELETED: Unsafe Headers that crash mobile browsers
-        // request.headers["Referer"]
-        // request.headers["User-Agent"]
-        // request.headers["Cookie"]
-
-        // KEEP: Safely attaching cookie to the URL instead
         let urlCookie=cookieValue.startsWith("__hdnea__=")?cookieValue.substring(10):cookieValue;
 
         if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST||
@@ -146,9 +139,10 @@ color:rgba(255,255,255,0.12);
       video.play().catch(()=>{});
     }catch(e){}
 
-    video.addEventListener("play",()=>{
-      video.muted=false;
-    });
+    // THE FIX IS HERE: { once: true } forces this to only happen on the initial load.
+    video.addEventListener("play", () => {
+      video.muted = false;
+    }, { once: true });
 
   });
 })();
