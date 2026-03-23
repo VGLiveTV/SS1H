@@ -58,8 +58,7 @@
       streamUrl: "https://jiotvmblive.cdn.jio.com//bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd",
       keyId: "400131994b445d8c8817202248760fda",
       key: "2d56cb6f07a75b9aff165d534ae2bfc4",
-
-      manualCookie: "__hdnea__=st=1774263443~exp=1774349843~acl=/*~hmac=950ff90830cc197557824598f9995d8535d4654a0de76466ff53597e5ade4c81",
+      manualCookie: "", // Removed hardcoded cookie, will be set via fetch
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -76,7 +75,7 @@
           CONFIG.manualCookie = cookieData[0].cookie;
         }
       } catch (e) {
-        console.error("Failed to fetch live cookie, using fallback", e);
+        console.error("Failed to fetch live cookie from GitHub", e);
       }
 
       const videoEl = document.getElementById('video');
@@ -103,7 +102,7 @@
         request.headers['Referer'] = 'https://www.jiotv.com/';
         request.headers['User-Agent'] = 'plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6';
 
-        if (CONFIG.manualCookie && CONFIG.manualCookie !== "PUT_YOUR_COOKIE_HERE") {
+        if (CONFIG.manualCookie) {
 
           request.headers['Cookie'] = CONFIG.manualCookie;
 
