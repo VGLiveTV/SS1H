@@ -40,6 +40,23 @@ font-weight:600;
 color:rgba(255,255,255,0.12);
 }
 
+/* On-screen error logger for Mobile Debugging */
+#error-log {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(220, 20, 60, 0.9);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 12px;
+    z-index: 9999;
+    display: none;
+    max-width: 90%;
+    word-wrap: break-word;
+}
+
 @media(max-width:700px){
 .custom-watermark{font-size:9px;top:60%;left:16%}
 }
@@ -48,8 +65,9 @@ color:rgba(255,255,255,0.12);
 <body>
 
 <div class="shaka-video-container" id="player-container">
-<video id="video" autoplay muted playsinline preload="metadata"></video>
+<video id="video" playsinline preload="metadata"></video>
 <div class="custom-watermark"> </div>
+<div id="error-log"></div>
 </div>
 
 <script>
@@ -64,12 +82,15 @@ color:rgba(255,255,255,0.12);
   document.addEventListener("DOMContentLoaded",async()=>{
 
     shaka.polyfill.installAll();
-    if(!shaka.Player.isBrowserSupported()) return;
+    if(!shaka.Player.isBrowserSupported()) {
+        document.getElementById("error-log").style.display = "block";
+        document.getElementById("error-log").innerText = "Browser not supported for Shaka Player.";
+        return;
+    }
 
     const video=document.getElementById("video");
     const container=document.getElementById("player-container");
-
-    video.muted=true;
+    const errorLog = document.getElementById("error-log");
 
     const player=new shaka.Player();
     await player.attach(video);
@@ -105,24 +126,30 @@ color:rgba(255,255,255,0.12);
       }
     });
 
+    // Error Listener - Prints to screen for JioPages debugging
+    player.addEventListener('error', (event) => {
+        const error = event.detail;
+        console.error('Error code', error.code, 'object', error);
+        errorLog.style.display = "block";
+        errorLog.innerText = `Shaka Error: ${error.code}\nIf 6012: CORS/Network Blocked by JioPages.\nIf 6001: DRM blocked.`;
+    });
+
     let cookieValue="";
 
     try{
       const response=await fetch(CONFIG.cookieUrl,{cache:"no-store"});
       const rawText=await response.text();
-      
       const match = rawText.match(/__hdnea__=[A-Za-z0-9~=/*_-]+/);
-      
       if (match) {
         cookieValue = match[0];
       }
     }catch(e){
-      console.error("Failed to fetch or parse cookie:", e);
+      errorLog.style.display = "block";
+      errorLog.innerText = "Failed to fetch cookie JSON. Check adblocker.";
     }
 
     if(cookieValue){
       player.getNetworkingEngine().registerRequestFilter((type,request)=>{
-        
         let urlCookie=cookieValue.startsWith("__hdnea__=")?cookieValue.substring(10):cookieValue;
 
         if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST||
@@ -136,13 +163,11 @@ color:rgba(255,255,255,0.12);
 
     try{
       await player.load(CONFIG.streamUrl);
-      video.play().catch(()=>{});
-    }catch(e){}
-
-    // THE FIX IS HERE: { once: true } forces this to only happen on the initial load.
-    video.addEventListener("play", () => {
-      video.muted = false;
-    }, { once: true });
+      // Removed programmatic video.play(). You MUST tap the big play button manually.
+    }catch(e){
+        errorLog.style.display = "block";
+        errorLog.innerText = `Load Error: ${e.message || "Unknown"}`;
+    }
 
   });
 })();
