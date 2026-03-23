@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Star Sports 1 Hindi HD</title>
+<title>Star Sports // Dillzy </title>
 <meta name="referrer" content="no-referrer">
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
@@ -77,14 +77,32 @@ color:rgba(255,255,255,0.12);
     const ui=new shaka.ui.Overlay(player,container,video);
 
     ui.configure({
-              controlPanelElements: ['play_pause','time_and_duration','mute','volume','spacer','language','captions','picture_in_picture','quality','fullscreen'],
-        seekBarColors: { base: 'white', buffered: 'red', played: 'green' }
+      addBigPlayButton: true,
+      controlPanelElements: [
+        "mute",           
+        "play_pause",     
+        "time_and_duration", 
+        "spacer",
+        "quality",
+        "picture_in_picture",
+        "fullscreen"
+      ],
+      seekBarColors: {
+        base: "white",
+        buffered: "red", 
+        played: "green"
+      }
     });
 
     player.configure({
-              drm: { clearKeys: { [CONFIG.keyId]: CONFIG.key } },
-        manifest: { defaultPresentationDelay: 5 },
-        streaming: { safeSeekOffset: 5, bufferingGoal: 10, rebufferingGoal: 2, lowLatencyMode: true }
+      drm:{clearKeys:{[CONFIG.keyId]:CONFIG.key}},
+      manifest:{defaultPresentationDelay:5},
+      streaming:{
+        lowLatencyMode:true,
+        bufferingGoal:10,
+        rebufferingGoal:2,
+        safeSeekOffset:5
+      }
     });
 
     let cookieValue="";
@@ -94,7 +112,6 @@ color:rgba(255,255,255,0.12);
       const rawText=await response.text();
       
       // SMART COOKIE EXTRACTOR
-      // Scans the raw text and extracts strictly the cookie string, ignoring all JSON formatting, quotes, or brackets
       const match = rawText.match(/__hdnea__=[A-Za-z0-9~=/*_-]+/);
       
       if (match) {
@@ -106,10 +123,13 @@ color:rgba(255,255,255,0.12);
 
     if(cookieValue){
       player.getNetworkingEngine().registerRequestFilter((type,request)=>{
-        request.headers["Referer"]="https://www.jiotv.com/";
-        request.headers["User-Agent"]="plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
-        request.headers["Cookie"]=cookieValue;
+        
+        // DELETED: Unsafe Headers that crash mobile browsers
+        // request.headers["Referer"]
+        // request.headers["User-Agent"]
+        // request.headers["Cookie"]
 
+        // KEEP: Safely attaching cookie to the URL instead
         let urlCookie=cookieValue.startsWith("__hdnea__=")?cookieValue.substring(10):cookieValue;
 
         if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST||
