@@ -109,15 +109,18 @@ color:rgba(255,255,255,0.12);
 
     try{
       const response=await fetch(CONFIG.cookieUrl,{cache:"no-store"});
-      const textData=await response.text();
+      const rawText=await response.text();
       
-      // SMART EXTRACTOR: Scans the entire raw file and safely extracts only the __hdnea__ string, 
-      // ignoring JSON structure, quotes, or formatting completely.
-      const match = textData.match(/__hdnea__=[^"'\s\\]+/);
+      // SMART COOKIE EXTRACTOR
+      // Scans the raw text and extracts strictly the cookie string, ignoring all JSON formatting, quotes, or brackets
+      const match = rawText.match(/__hdnea__=[A-Za-z0-9~=/*_-]+/);
+      
       if (match) {
         cookieValue = match[0];
       }
-    }catch(e){}
+    }catch(e){
+      console.error("Failed to fetch or parse cookie:", e);
+    }
 
     if(cookieValue){
       player.getNetworkingEngine().registerRequestFilter((type,request)=>{
