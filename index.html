@@ -142,7 +142,7 @@ color:rgba(255,255,255,0.12);
 
     // THE FIX IS HERE: { once: true } forces this to only happen on the initial load.
     video.addEventListener("play", () => {
-      video.muted = false;
+      video.muted = true;
     }, { once: true });
 
   });
